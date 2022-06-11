@@ -1,50 +1,51 @@
 from typing import List, Optional
-from enum import Enum
-from uuid import uuid4
+from enum import Enum, unique
+from uuid import UUID
 from datetime import datetime
 
 from pydantic import BaseModel
 
 
+@unique
 class ShopUnitType(str, Enum):
-    offer = 'OFFER'
-    category = 'CATEGORY'
+    OFFER = 'OFFER'
+    CATEGORY = 'CATEGORY'
 
 
 class ShopUnit(BaseModel):
-    id: uuid4
+    id: UUID
     name: str
     date: datetime
-    parentId: Optional[uuid4] = None
+    parentId: Optional[UUID] = None
     type: ShopUnitType
     price: Optional[int] = None
     children: List['ShopUnit'] = []
 
 
 class ShopUnitImport(BaseModel):
-    id: uuid4
+    id: UUID
     name: str
-    parentId: Optional[uuid4] = None
+    parentId: Optional[UUID] = None
     type: ShopUnitType
     price: Optional[int] = None
 
 
 class ShopUnitImportRequest(BaseModel):
-    items = List[ShopUnitImport]
-    updateDate = datetime
+    items: List[ShopUnitImport] = []
+    updateDate: datetime
 
 
 class ShopUnitStatisticUnit(BaseModel):
-    id: uuid4
+    id: UUID
     name: str
-    parentId: Optional[uuid4]
+    parentId: Optional[UUID]
     type: ShopUnitType
     price: Optional[int]
     date: datetime
 
 
 class ShopUnitStatisticResponse(BaseModel):
-    items: List[ShopUnitStatisticUnit]
+    items: List[ShopUnitStatisticUnit] = []
 
 
 class Error(BaseModel):
