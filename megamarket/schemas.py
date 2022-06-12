@@ -8,8 +8,8 @@ from pydantic import BaseModel
 
 @unique
 class ShopUnitType(str, Enum):
-    OFFER = 'OFFER'
-    CATEGORY = 'CATEGORY'
+    offer = 'OFFER'
+    category = 'CATEGORY'
 
 
 class ShopUnit(BaseModel):
