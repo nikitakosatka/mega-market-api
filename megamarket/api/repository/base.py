@@ -1,4 +1,5 @@
 from fastapi import status
+from sqlalchemy.orm import joinedload
 
 from megamarket import schemas, models
 from megamarket.schemas import Error
@@ -72,3 +73,15 @@ def delete(id, response, db):
     db.commit()
 
     return status.HTTP_200_OK
+
+
+def nodes(id, response, db):
+    item = db.query(models.ShopUnit).filter(models.ShopUnit.id == id).options(
+        joinedload(models.ShopUnit.children)).first()
+
+    if not item:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return Error(code=404,
+                     message="Item not found")
+
+    return item

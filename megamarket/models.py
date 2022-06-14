@@ -19,4 +19,4 @@ class ShopUnit(Base):
                       nullable=True)
     price = Column(Integer, nullable=True)
     updateDate = Column(DateTime, nullable=False)
-    children = relationship('ShopUnit', cascade="all, delete")
+    children = relationship('ShopUnit', cascade="all, delete", lazy='joined')

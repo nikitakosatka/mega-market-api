@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request, status
-from fastapi.exceptions import RequestValidationError
 
 from megamarket import models
 from megamarket.db import engine
