@@ -1,13 +1,10 @@
-from fastapi import Response, status
-from sqlalchemy.orm import Session
+from fastapi import status
 
 from megamarket import schemas, models
 from megamarket.schemas import Error
 
 
-def imports(request: schemas.ShopUnitImportRequest,
-            response: Response,
-            db: Session):
+def imports(request, response, db):
     update_date = request.updateDate
     response.status_code = status.HTTP_400_BAD_REQUEST
 
@@ -18,7 +15,7 @@ def imports(request: schemas.ShopUnitImportRequest,
     ids = set(i.id for i in db.query(models.ShopUnit).all())
 
     for item in request.items:
-        if item.parentId not in ids:
+        if item.parentId and item.parentId not in ids:
             return Error(code=400,
                          message=f"ParentId not found")
 
@@ -59,5 +56,19 @@ def imports(request: schemas.ShopUnitImportRequest,
         db.commit()
 
     response.status_code = status.HTTP_200_OK
+
+    return status.HTTP_200_OK
+
+
+def delete(id, response, db):
+    item = db.query(models.ShopUnit).filter(models.ShopUnit.id == id).first()
+
+    if not item:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return Error(code=404,
+                     message="Item not found")
+
+    db.delete(item)
+    db.commit()
 
     return status.HTTP_200_OK
