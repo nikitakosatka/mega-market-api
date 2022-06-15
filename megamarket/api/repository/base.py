@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from megamarket import schemas, models
+from megamarket.utils import InvalidRequestException
 
 
 def find_by_id(id, db):
@@ -22,12 +23,13 @@ def imports(item, update_date, db):
     ids = set(db.scalars(select(models.ShopUnit.id)).all())
 
     if item.parentId and item.parentId not in ids:
-        raise ValidationError
+        raise InvalidRequestException(f"Parent {item.parentId} not found")
 
     parent_item = find_by_id(item.parentId, db).first()
 
     if parent_item and parent_item.type != schemas.ShopUnitType['category']:
-        raise ValidationError
+        raise InvalidRequestException(
+            f"Parent {item.parentId} is not a category")
 
     old_item = db.query(models.ShopUnit).filter(
         models.ShopUnit.id == item.id)
