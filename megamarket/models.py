@@ -18,5 +18,5 @@ class ShopUnit(Base):
     parentId = Column(UUID(as_uuid=True), ForeignKey('shop_units.id'),
                       nullable=True)
     price = Column(Integer, nullable=True)
-    updateDate = Column(DateTime, nullable=False)
+    date = Column(DateTime, nullable=False)
     children = relationship('ShopUnit', cascade="all, delete", lazy='joined')

@@ -21,6 +21,9 @@ class ShopUnit(BaseModel):
     price: Optional[int] = None
     children: List['ShopUnit'] = []
 
+    class Config:
+        orm_mode = True
+
 
 class ShopUnitImport(BaseModel):
     id: UUID
