@@ -1,9 +1,41 @@
-from pydantic import ValidationError
+from collections import deque
+
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from megamarket import schemas, models
 from megamarket.utils import InvalidRequestException
+
+
+def update_category_prices(id, db):
+    item = find_by_id(id, db).first()
+    if not item:
+        return
+    parent = find_by_id(item.parentId, db).first()
+
+    if item.type == schemas.ShopUnitType['category']:
+        queue = deque()
+        prices_sum, prices_count = 0, 0
+
+        queue.append(item)
+
+        while queue:
+            current = queue.popleft()
+
+            for child in current.children:
+                if child.type == schemas.ShopUnitType['offer']:
+                    prices_sum += child.price
+                    prices_count += 1
+                else:
+                    queue.append(child)
+
+        if prices_count != 0:
+            item.price = prices_sum // prices_count
+
+    if not parent:
+        return
+
+    update_category_prices(parent.id, db)
 
 
 def find_by_id(id, db):
@@ -44,8 +76,14 @@ def imports(item, update_date, db):
                            type=models.ShopUnitType(item.type),
                            price=item.price,
                            parentId=item.parentId,
-                           date=update_date)
+                           date=update_date,
+                           )
         db.add(shop_item)
+
+    db.commit()
+
+    if item.price:
+        update_category_prices(item.id, db)
 
     db.commit()
 

@@ -1,6 +1,5 @@
-from fastapi import FastAPI, Request, APIRouter
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
 from megamarket.schemas import Error

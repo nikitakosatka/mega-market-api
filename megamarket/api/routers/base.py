@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from megamarket import schemas
 from megamarket.db import get_db
 from megamarket.api.services import base
-from megamarket.schemas import Error
 from megamarket.api.routers.example_values import *
 from megamarket.utils import InvalidRequestException
 
