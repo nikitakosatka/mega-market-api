@@ -21,7 +21,14 @@ class ShopUnit(BaseModel):
     parentId: Optional[UUID] = None
     type: ShopUnitType
     price: Optional[int] = None
-    children: List['ShopUnit'] = []
+    children: Optional[List['ShopUnit']] = None
+
+    @validator('children')
+    def empty_list_to_none(cls, v):
+        if not v:
+            v = None
+
+        return v
 
     class Config:
         orm_mode = True
