@@ -34,7 +34,7 @@ async def delete(id: UUID, response: Response, db: Session = Depends(get_db)):
 
     if not item:
         response.status_code = status.HTTP_404_NOT_FOUND
-        raise InvalidRequestException(f"Item with Id {id} not found")
+        raise NotFoundException(f"Item with Id {id} not found")
 
     return status.HTTP_200_OK
 
