@@ -7,7 +7,7 @@ from megamarket import schemas, models
 from megamarket.utils import InvalidRequestException
 
 
-def update_category_prices(id, db):
+def update_category_prices(id, dt, db):
     item = find_by_id(id, db).first()
     if not item:
         return
@@ -31,11 +31,12 @@ def update_category_prices(id, db):
 
         if prices_count != 0:
             item.price = prices_sum // prices_count
+            item.date = dt
 
     if not parent:
         return
 
-    update_category_prices(parent.id, db)
+    update_category_prices(parent.id, dt, db)
 
 
 def find_by_id(id, db):
@@ -83,7 +84,7 @@ def imports(item, update_date, db):
     db.commit()
 
     if item.price:
-        update_category_prices(item.id, db)
+        update_category_prices(item.id, update_date, db)
 
     db.commit()
 

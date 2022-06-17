@@ -1,8 +1,8 @@
 from uuid import uuid4
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID, ENUM
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID, ENUM, TIMESTAMP
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 from megamarket.db import Base
 from megamarket.schemas import ShopUnitType
@@ -18,5 +18,5 @@ class ShopUnit(Base):
     parentId = Column(UUID(as_uuid=True), ForeignKey('shop_units.id'),
                       nullable=True)
     price = Column(Integer, nullable=True)
-    date = Column(DateTime, nullable=False)
+    date = Column(TIMESTAMP(timezone=False), nullable=False)
     children = relationship('ShopUnit', cascade="all, delete", lazy='joined')

@@ -7,7 +7,7 @@ from megamarket import schemas
 from megamarket.db import get_db
 from megamarket.api.services import base
 from megamarket.api.routers.example_values import *
-from megamarket.utils import InvalidRequestException
+from megamarket.utils import InvalidRequestException, NotFoundException
 
 router = APIRouter(tags=['Base'])
 
@@ -49,6 +49,6 @@ async def nodes(id: UUID,
 
     if not item:
         response.status_code = status.HTTP_404_NOT_FOUND
-        raise InvalidRequestException(f"Item with Id {id} not found")
+        raise NotFoundException(f"Item with Id {id} not found")
 
     return item

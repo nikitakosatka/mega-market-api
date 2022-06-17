@@ -1,11 +1,12 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 from enum import Enum, unique
 from uuid import UUID
 from datetime import datetime
 
 from pydantic import BaseModel, validator, root_validator
 
-from megamarket.utils import InvalidRequestException
+from megamarket.utils import (InvalidRequestException,
+                              convert_datetime_to_iso8601)
 
 
 @unique
@@ -26,12 +27,16 @@ class ShopUnit(BaseModel):
     @validator('children')
     def empty_list_to_none(cls, v):
         if not v:
-            v = None
+            return None
 
         return v
 
     class Config:
         orm_mode = True
+
+        json_encoders = {
+            datetime: lambda dt: convert_datetime_to_iso8601(dt)
+        }
 
 
 class ShopUnitImport(BaseModel):
