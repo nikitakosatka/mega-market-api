@@ -7,7 +7,7 @@ from megamarket import schemas
 from megamarket.db import get_db
 from megamarket.api.services import base
 from megamarket.api.routers.example_values import *
-from megamarket.utils import InvalidRequestException, NotFoundException
+from megamarket.utils import NotFoundException
 
 router = APIRouter(tags=['Base'])
 
