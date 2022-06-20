@@ -131,3 +131,34 @@ nodes_responses = {
         }
     }
 }
+
+sales_response_example = {
+    "items": [
+        {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66a444",
+            "name": "Оффер",
+            "date": "2022-05-28T21:12:01.000Z",
+            "parentId": "3fa85f64-5717-4562-b3fc-2c963f66a333",
+            "price": 234,
+            "type": "OFFER"
+        }
+    ]
+}
+
+sales_responses = {
+    200: {
+        "description": "Items requested by date",
+        "content": {
+            "application/json": {
+                "example": sales_response_example}
+        }
+    },
+    400: {
+        "model": Error,
+        "description": "Validation Error",
+        "content": {
+            "application/json": {
+                "example": error_400_example}
+        }
+    }
+}

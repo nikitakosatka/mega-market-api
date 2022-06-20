@@ -51,6 +51,8 @@ async def nodes(id: UUID, db: Session = Depends(get_db)):
     return item
 
 
-@router.get('/sales', status_code=status.HTTP_200_OK)
+@router.get('/sales', status_code=status.HTTP_200_OK,
+            response_model=schemas.ShopUnitStatisticResponse,
+            responses=sales_responses)
 async def sales(date: datetime, db: Session = Depends(get_db)):
     return base.sales(date, db)
