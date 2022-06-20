@@ -1,4 +1,6 @@
-from sqlalchemy import select
+import datetime
+
+from sqlalchemy import select, and_
 from sqlalchemy.orm import joinedload
 
 from megamarket import schemas, models
@@ -62,3 +64,11 @@ def delete(id, db):
 def nodes(id, db):
     return find_by_id(id, db).options(
         joinedload(models.ShopUnit.children)).first()
+
+
+def sales(date, db):
+    return db.query(models.ShopUnit).filter(and_(
+        models.ShopUnit.date.between(
+            date - datetime.timedelta(hours=24),
+            date),
+        models.ShopUnit.type == schemas.ShopUnitType['offer'])).all()

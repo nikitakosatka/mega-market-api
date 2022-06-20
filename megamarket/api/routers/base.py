@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status, Body
@@ -48,3 +49,8 @@ async def nodes(id: UUID, db: Session = Depends(get_db)):
         raise NotFoundException(f"Item with Id {id} not found")
 
     return item
+
+
+@router.get('/sales', status_code=status.HTTP_200_OK)
+async def sales(date: datetime, db: Session = Depends(get_db)):
+    return base.sales(date, db)

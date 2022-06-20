@@ -51,3 +51,8 @@ def delete(id, db):
 
 def nodes(id, db):
     return base.nodes(id, db)
+
+
+def sales(date, db):
+    return schemas.ShopUnitStatisticResponse(
+        items=[u.__dict__ for u in base.sales(date, db)])
