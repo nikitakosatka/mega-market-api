@@ -3,11 +3,14 @@ from fastapi import FastAPI
 from megamarket import models
 from megamarket.db import engine
 from megamarket.api.routers import base
-from megamarket.middleware import create_middleware
+from megamarket.exceptions import create_exceptions
+from megamarket.openapi_metadata import change_doc_metadata
 
 app = FastAPI()
 
-create_middleware(app)
+change_doc_metadata(app)
+
+create_exceptions(app)
 
 models.Base.metadata.create_all(engine)
 

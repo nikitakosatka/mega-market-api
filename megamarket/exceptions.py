@@ -6,7 +6,7 @@ from megamarket.schemas import Error
 from megamarket.utils import InvalidRequestException, NotFoundException
 
 
-def create_middleware(app: FastAPI):
+def create_exceptions(app: FastAPI):
     @app.exception_handler(InvalidRequestException)
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request, exc):
