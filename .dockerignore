@@ -1,0 +1,8 @@
+*.md
+*.yaml
+*env
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+unit_test.py
