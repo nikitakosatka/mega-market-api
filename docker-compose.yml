@@ -1,11 +1,18 @@
 version: "3.9"
 services:
   web:
+    restart: always
     build: .
+    depends_on:
+      - postgres
+    deploy:
+      restart_policy:
+        condition: any
     ports:
       - "80:80"
     env_file: "${WEB_ENV_FILE:-.env}"
   postgres:
+    restart: always
     image: "postgres:14.3-alpine"
     environment:
       POSTGRES_DB: "${DB_NAME}"
@@ -13,3 +20,6 @@ services:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     ports:
       - "5432:5432"
+    deploy:
+      restart_policy:
+        condition: on-failure
