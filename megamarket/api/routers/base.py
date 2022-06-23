@@ -28,8 +28,7 @@ async def imports(
     или с категории на товар не допускается. Порядок элементов в запросе
     является произвольным.
     """
-    for item in request.items:
-        base.imports(item, request.updateDate, db)
+    base.imports(request.items, request.updateDate, db)
 
     return status.HTTP_200_OK
 

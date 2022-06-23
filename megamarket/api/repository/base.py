@@ -11,6 +11,11 @@ def find_by_id(id, db):
     return db.query(models.ShopUnit).filter(models.ShopUnit.id == id)
 
 
+def get_all_categories(db):
+    return db.query(models.ShopUnit).filter(
+        models.ShopUnit.type == schemas.ShopUnitType['category']).all()
+
+
 def create(id, name, type, price, parent_id, date):
     return models.ShopUnit(id=id,
                            name=name,
@@ -45,8 +50,7 @@ def imports(item, update_date, db):
                            type=models.ShopUnitType(item.type),
                            price=item.price,
                            parent_id=item.parentId,
-                           date=update_date,
-                           )
+                           date=update_date)
         db.add(shop_item)
 
     db.commit()
