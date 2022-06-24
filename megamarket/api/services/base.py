@@ -65,18 +65,24 @@ def imports(items, datetime, db):
         else:
             raise InvalidRequestException
 
-    new_items = \
-        items_without_parent_id + \
-        items_with_exist_parent_id + \
-        items_with_new_parent_id
-
-    for item in new_items:
+    for item in items_without_parent_id + items_with_exist_parent_id:
         _import(item, datetime, db)
+        update_category_prices(item.id, datetime, db)
+
+    for item in items_with_new_parent_id:
+        new_item = item.copy()
+        new_item.parentId = None
+        _import(new_item, datetime, db)
+
+    for item in items_with_new_parent_id:
+        new_item = base.find_by_id(item.id, db)
+        new_item.update(item.dict())
+        db.commit()
+        update_category_prices(item.id, datetime, db)
 
 
 def _import(item, update_date, db):
     base.imports(item, update_date, db)
-    update_category_prices(item.id, update_date, db)
 
 
 def delete(id, db):
