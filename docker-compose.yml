@@ -1,16 +1,5 @@
 version: "3.9"
 services:
-  web:
-    restart: always
-    build: .
-    depends_on:
-      - postgres
-    deploy:
-      restart_policy:
-        condition: any
-    ports:
-      - "80:80"
-    env_file: "${WEB_ENV_FILE:-.env}"
   postgres:
     restart: always
     image: "postgres:14.3-alpine"
@@ -20,6 +9,18 @@ services:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     ports:
       - "5432:5432"
-    deploy:
-      restart_policy:
-        condition: on-failure
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_NAME}", "-U", "${DB_USER}"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
+  web:
+    restart: always
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - "80:80"
+    env_file: "${WEB_ENV_FILE:-.env}"
+    command: ["./wait-for", "postgres:5432", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]

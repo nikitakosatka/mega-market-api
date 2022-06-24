@@ -2,6 +2,9 @@ FROM python:3.10-alpine
 
 WORKDIR /app
 
+ADD https://raw.githubusercontent.com/eficode/wait-for/master/wait-for .
+RUN chmod +x wait-for
+
 COPY requirements.txt requirements.txt
 
 RUN \
