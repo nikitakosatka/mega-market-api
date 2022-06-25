@@ -1,8 +1,14 @@
 *.md
 *.yaml
-*env
+*.json
+
+venv
+
+.env
 .git
 .gitignore
+
 Dockerfile
 docker-compose.yml
+
 unit_test.py
