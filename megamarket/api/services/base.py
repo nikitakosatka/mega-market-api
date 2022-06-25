@@ -48,16 +48,12 @@ def imports(items, datetime, db):
         i.id for i in items if i.type == schemas.ShopUnitType['category']
     )
 
-    items_without_parent_id = []
-    items_with_exist_parent_id = []
+    items_without_new_parent_id = []
     items_with_new_parent_id = []
 
     for item in items:
-        if not item.parentId:
-            items_without_parent_id.append(item)
-
-        elif item.parentId in exist_ids:
-            items_with_exist_parent_id.append(item)
+        if not item.parentId or item.parentId in exist_ids:
+            items_without_new_parent_id.append(item)
 
         elif item.parentId in new_ids:
             items_with_new_parent_id.append(item)
@@ -65,7 +61,7 @@ def imports(items, datetime, db):
         else:
             raise InvalidRequestException
 
-    for item in items_without_parent_id + items_with_exist_parent_id:
+    for item in items_without_new_parent_id:
         _import(item, datetime, db)
         update_category_prices(item.id, datetime, db)
 
