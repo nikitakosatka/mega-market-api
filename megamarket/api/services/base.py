@@ -6,12 +6,12 @@ from megamarket.utils import InvalidRequestException
 
 
 def update_category_prices(id, dt, db):
-    item = base.find_by_id(id, db).first()
+    item = base.find_shop_unit_by_id(id, db).first()
 
     if not item:
         return
 
-    parent = base.find_by_id(item.parentId, db).first()
+    parent = base.find_shop_unit_by_id(item.parentId, db).first()
 
     if item.type == schemas.ShopUnitType['category']:
         queue = deque()
@@ -32,13 +32,14 @@ def update_category_prices(id, dt, db):
         if prices_count != 0:
             item.price = prices_sum // prices_count
             item.date = dt
+            add_statistic_unit(item, dt, db)
+
+    db.commit()
 
     if not parent:
         return
 
     update_category_prices(parent.id, dt, db)
-
-    db.commit()
 
 
 def imports(items, datetime, db):
@@ -71,10 +72,27 @@ def imports(items, datetime, db):
         _import(new_item, datetime, db)
 
     for item in items_with_new_parent_id:
-        new_item = base.find_by_id(item.id, db)
+        new_item = base.find_shop_unit_by_id(item.id, db)
         new_item.update(item.dict())
         db.commit()
         update_category_prices(item.id, datetime, db)
+
+    for i in items:
+        add_statistic_unit(i, datetime, db)
+
+
+def add_statistic_unit(item, update_date, db):
+    parent_statistic_unit = base.find_statistic_units_by_item_id(item.parentId,
+                                                                 db).first()
+
+    parent_id = None
+    if parent_statistic_unit:
+        parent_id = parent_statistic_unit.id
+
+    statistic_unit = base.create_statistic_unit(item, parent_id, update_date)
+
+    db.add(statistic_unit)
+    db.commit()
 
 
 def _import(item, update_date, db):
@@ -92,3 +110,9 @@ def nodes(id, db):
 def sales(date, db):
     return schemas.ShopUnitStatisticResponse(
         items=[u.__dict__ for u in base.sales(date, db)])
+
+
+def statistics(id, date_start, date_end, db):
+    return schemas.ShopUnitStatisticResponse(
+        items=[u.__dict__ for u in
+               base.statistics(id, date_start, date_end, db)])

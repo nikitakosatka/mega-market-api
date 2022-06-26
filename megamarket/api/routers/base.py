@@ -10,13 +10,14 @@ from megamarket.api.services import base
 from megamarket.api.routers.example_values import *
 from megamarket.utils import NotFoundException
 
-router = APIRouter(tags=['Базовые задачи'])
+router = APIRouter()
 
 
 @router.post(
     '/imports',
     status_code=status.HTTP_200_OK,
-    responses=imports_responses)
+    responses=imports_responses,
+    tags=['Базовые задачи'])
 async def imports(
         request: schemas.ShopUnitImportRequest = Body(
             example=imports_request_example),
@@ -33,8 +34,10 @@ async def imports(
     return status.HTTP_200_OK
 
 
-@router.delete('/delete/{id}', status_code=status.HTTP_200_OK,
-               responses=delete_responses)
+@router.delete('/delete/{id}',
+               status_code=status.HTTP_200_OK,
+               responses=delete_responses,
+               tags=['Базовые задачи'])
 async def delete(id: UUID, db: Session = Depends(get_db)):
     """
     Удалить элемент по идентификатору. При удалении категории удаляются все
@@ -49,9 +52,11 @@ async def delete(id: UUID, db: Session = Depends(get_db)):
     return status.HTTP_200_OK
 
 
-@router.get('/nodes/{id}', status_code=status.HTTP_200_OK,
+@router.get('/nodes/{id}',
+            status_code=status.HTTP_200_OK,
             response_model=schemas.ShopUnit,
-            responses=nodes_responses)
+            responses=nodes_responses,
+            tags=['Базовые задачи'])
 async def nodes(id: UUID, db: Session = Depends(get_db)):
     """
     Получить информацию об элементе по идентификатору. При получении информации
@@ -65,9 +70,10 @@ async def nodes(id: UUID, db: Session = Depends(get_db)):
     return item
 
 
-@router.get('/sales', status_code=status.HTTP_200_OK,
+@router.get('/sales',
+            status_code=status.HTTP_200_OK,
             response_model=schemas.ShopUnitStatisticResponse,
-            responses=sales_responses)
+            responses=sales_responses, tags=['Дополнительные задачи'])
 async def sales(date: datetime, db: Session = Depends(get_db)):
     """
     Получение списка товаров, цена которых была обновлена за последние 24 часа
@@ -76,3 +82,18 @@ async def sales(date: datetime, db: Session = Depends(get_db)):
     средняя цена категории, которая содержит этот товар, тоже обновляется.
     """
     return base.sales(date, db)
+
+
+@router.get('/node/{id}/statistic',
+            status_code=status.HTTP_200_OK,
+            response_model=schemas.ShopUnitStatisticResponse,
+            responses=sales_responses, tags=['Дополнительные задачи'])
+async def statistics(id: UUID,
+                     dateStart: datetime,
+                     dateEnd: datetime,
+                     db: Session = Depends(get_db)):
+    """
+    Получение статистики (истории обновлений) по цене товара/категории за
+    заданный интервал. Статистика по удаленным элементам недоступна.
+    """
+    return base.statistics(id, dateStart, dateEnd, db)
